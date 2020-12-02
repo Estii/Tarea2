@@ -183,7 +183,6 @@ func Ver_Catalogo(){
 }
 
 func Cargar_Libro(tipo int64){
-	var numMensajes int64 = 0
 	var flag bool
 	rand.Seed(time.Now().UnixNano())
 	//var conn *grpc.ClientConn
@@ -191,6 +190,7 @@ func Cargar_Libro(tipo int64){
 	var ip string
 	var max_conn int = 0
 	for;flag;{		
+		var numMensajes int64 = 0
 		ip = "dist"
 		ip += strconv.Itoa(rand.Intn(3) + 109)
 		conn, err := grpc.Dial(ip+":9000", grpc.WithInsecure())
