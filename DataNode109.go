@@ -110,8 +110,6 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
 
-	var contador int64 = 0 
-
 	if(cantidad2>0){		
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial("dist110:9000", grpc.WithInsecure())
@@ -167,6 +165,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 
 	if( flag1c==0 && flag2c ==0 ){
 		if(flag1==0 && flag2 == 0){
+			var contador int64 = 0 
 			conn3, err3 := grpc.Dial("dist112:9000", grpc.WithInsecure())
 			if err3 != nil {
 				fmt.Println("Error con NameNode")
@@ -199,11 +198,12 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					conn2, err := grpc.Dial("dist110:9000", grpc.WithInsecure())
 					if err != nil {
 						log.Fatalf("Error al conectar con el servidor: %s", err)
+						return 0
 					}   
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
 					respuesta1 , _ := Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
-					contador+= respuesta1.Retorno
+					contador += respuesta1.Retorno
 					indice+=1
 				}
 				// Enviamos a DataNode ID = 3.
@@ -212,11 +212,12 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					conn2, err := grpc.Dial("dist111:9000", grpc.WithInsecure())
 					if err != nil {
 						log.Fatalf("Error al conectar con el servidor: %s", err)
+						return 0
 					}   
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
 					respuesta2,_ := Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.	
-					contador+= respuesta2.Retorno
+					contador += respuesta2.Retorno
 					indice+=1
 				}
 			}
