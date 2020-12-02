@@ -414,7 +414,7 @@ func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageClient
 			fmt.Println("Distribucion Descentralizada")			
 			timestart = time.Now().Unix()
 			message := nodos.MessageNode{ Cantidad1:cantidad_uniforme + cantidad_resto, Cantidad2:cantidad_uniforme,Cantidad3:cantidad_uniforme,NombreLibro:nombre_libro,ID: IDNODE}
-			resultado+ = PropuestaD(&message)
+			resultado += PropuestaD(&message)
 		}
 		if(message.Tipo == 2){
 			fmt.Println("Distribucion Centralizada")
