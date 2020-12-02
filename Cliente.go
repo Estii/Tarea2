@@ -288,7 +288,7 @@ func Cargar_Libro(tipo int64){
 				message := cliente.MessageCliente{ Termino: 1, CantidadChunks:Cantidad, ID:id , Tipo: tipo }
 				tiempo_i:= time.Now()
 				response, err6 := ConexionSubida.EnviarLibro(context.Background(), &message)
-				numMensajes+= response.Retorno
+				numMensajes += response.Retorno
 				if(err6!=nil || response.Retorno == 0){
 					fmt.Println("Subida Incomplenta\n")					
 				}else{

@@ -217,7 +217,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
 					respuesta2,_ := Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.	
-					contador+= respuesta1.Retorno
+					contador+= respuesta2.Retorno
 					indice+=1
 				}
 			}
@@ -328,6 +328,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 				return PropuestaD(msj)
 			}
 		}
+	return 
 	}
 }
 
