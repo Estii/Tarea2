@@ -109,7 +109,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta2 int64 = 0
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
-	
+
 	var contador int64 = 0 
 
 	if(cantidad2>0){		
@@ -329,8 +329,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 				return PropuestaD(msj)
 			}
 		}
-	return contador
 	}
+	return contador
 }
 
 
@@ -338,7 +338,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 // Propuesta Version Centralizada.
 func Propuesta(msj *nodos.MessageNode) int64{
 	// Conectamos con el DataNode.
-	var contador int = 0 
+	var contador int64 = 0 
 	var conn2 *grpc.ClientConn
 	conn2, err := grpc.Dial("dist112:9000", grpc.WithInsecure())
 	if err != nil {
