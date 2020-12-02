@@ -109,6 +109,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta2 int64 = 0
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
+	
+	var contador int64 = 0 
 
 	if(cantidad2>0){		
 		var conn *grpc.ClientConn
@@ -165,7 +167,6 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 
 	if( flag1c==0 && flag2c ==0 ){
 		if(flag1==0 && flag2 == 0){
-			var contador int64 = 0 
 			conn3, err3 := grpc.Dial("dist112:9000", grpc.WithInsecure())
 			if err3 != nil {
 				fmt.Println("Error con NameNode")
