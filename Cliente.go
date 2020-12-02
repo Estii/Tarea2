@@ -183,6 +183,7 @@ func Ver_Catalogo(){
 }
 
 func Cargar_Libro(tipo int64){
+	var numMensajes int64 = 0
 	var flag bool
 	rand.Seed(time.Now().UnixNano())
 	//var conn *grpc.ClientConn
@@ -280,21 +281,21 @@ func Cargar_Libro(tipo int64){
 					partBuffer := make([]byte, partSize)
 					file.Read(partBuffer)										
 					message := cliente.MessageCliente{ NombreLibro:libro+"_"+strconv.Itoa(j), Chunks:partBuffer, ID:id, Termino:0, Tipo: tipo }
-					ConexionSubida.EnviarLibro(context.Background(), &message)			
+					respuesta, _:= ConexionSubida.EnviarLibro(context.Background(), &message)	
+					numMensajes + = respuesta.Retorno		
 					j+=1
 				}															
 				message := cliente.MessageCliente{ Termino: 1, CantidadChunks:Cantidad, ID:id , Tipo: tipo }
 				tiempo_i:= time.Now()
 				response, err6 := ConexionSubida.EnviarLibro(context.Background(), &message)
+				numMensajes+= response.Retorno
 				if(err6!=nil || response.Retorno == 0){
-					fmt.Println("Subida Incomplenta\n")
-					tiempo_f := time.Since(tiempo_i)
-					fmt.Println("Tiempo: ",tiempo_f)
-					
+					fmt.Println("Subida Incomplenta\n")					
 				}else{
 					fmt.Println("Subida Completada\n")
 					tiempo_f := time.Since(tiempo_i)
 					fmt.Println("Tiempo: ",tiempo_f)
+					fmt.Println("msj intercambiados: ",numMensajes)
 				}
 			}	
 		}
