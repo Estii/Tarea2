@@ -201,8 +201,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					var conn2 *grpc.ClientConn
 					conn2, err := grpc.Dial("dist110:9000", grpc.WithInsecure())
 					if err != nil {
-						log.Fatalf("Error al conectar con el servidor: %s", err)}
-						return 0 
+						log.Fatalf("Error al conectar con el servidor: %s", err)
+						return 0
 					}   
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
