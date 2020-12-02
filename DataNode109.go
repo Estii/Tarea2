@@ -110,7 +110,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
 
-	var contador int64 = 1 
+	var contador int64 = 0 
 
 	if(cantidad2>0){		
 		var conn *grpc.ClientConn
@@ -179,6 +179,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					fmt.Println("Error conectando con NameNode")
 					return 0
 				}
+				contador+=1
 				var k int64
 				var indice int64
 				indice = 0
@@ -337,7 +338,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 
 // Propuesta Version Centralizada.
 func Propuesta(msj *nodos.MessageNode) int64{
-	var contador int64 = 0
+	var contador int64 =0
 	// Conectamos con el DataNode. 
 	var conn2 *grpc.ClientConn
 	conn2, err := grpc.Dial("dist112:9000", grpc.WithInsecure())
@@ -427,7 +428,7 @@ func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageClient
 		nombre_libro = " "
 		listachunks = listachunks[:0]
 		id = 0
-		return &cliente.ResponseCliente{Retorno:resultado},nil
+		return &cliente.ResponseCliente{Retorno:resultado+1},nil
 	}
 	for id != message.ID { // Si no esta disponible, esperara hasta que pueda.
 		fmt.Println("DataNode Ocupado porfavor espere un momento...")
