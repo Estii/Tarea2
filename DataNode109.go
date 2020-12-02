@@ -329,8 +329,6 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 			}
 		}
 	}
-	NameNodeUse = 0	
-	return 1
 }
 
 
