@@ -282,7 +282,7 @@ func Cargar_Libro(tipo int64){
 					file.Read(partBuffer)										
 					message := cliente.MessageCliente{ NombreLibro:libro+"_"+strconv.Itoa(j), Chunks:partBuffer, ID:id, Termino:0, Tipo: tipo }
 					respuesta, _:= ConexionSubida.EnviarLibro(context.Background(), &message)	
-					numMensajes + = respuesta.Retorno		
+					numMensajes += respuesta.Retorno		
 					j+=1
 				}															
 				message := cliente.MessageCliente{ Termino: 1, CantidadChunks:Cantidad, ID:id , Tipo: tipo }
