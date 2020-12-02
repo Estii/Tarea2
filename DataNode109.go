@@ -23,7 +23,6 @@ var listachunks [][]byte
 
 var NameNodeUse int64 = 0;
 var timestart int64 = 0;
-var Contador int64 = 0;
 
 // Utilizada para saber si el DataNode esta disponible para usar.
 func (s *Server) CheckEstado(ctx context.Context, message *cliente.EstadoE) (*cliente.EstadoS,error){
@@ -111,7 +110,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
 
-	var contador int64 = 0
+	var contador int64 = 0 
 
 	if(cantidad2>0){		
 		var conn *grpc.ClientConn
@@ -328,7 +327,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 				return PropuestaD(msj)
 			}
 		}
-	return 
+	return contador
 	}
 }
 
