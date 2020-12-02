@@ -110,7 +110,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
 
-	var contador int64 = 0 
+	var contador int64 = 1 
 
 	if(cantidad1>0){		
 		var conn *grpc.ClientConn
