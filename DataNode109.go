@@ -337,8 +337,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 
 // Propuesta Version Centralizada.
 func Propuesta(msj *nodos.MessageNode) int64{
-	// Conectamos con el DataNode.
-	var contador int64 = 0 
+	var contador int64 = 0
+	// Conectamos con el DataNode. 
 	var conn2 *grpc.ClientConn
 	conn2, err := grpc.Dial("dist112:9000", grpc.WithInsecure())
 	if err != nil {
@@ -402,7 +402,7 @@ func Propuesta(msj *nodos.MessageNode) int64{
 
 
 func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageCliente) (*cliente.ResponseCliente,error){
-	var resultado int64
+	var resultado int64 = 0
 	if(id == 0){ // Node disponible.
 		fmt.Println("\nSe ha solicitado subir el libro "+ message.NombreLibro[0:len(message.NombreLibro)-2])
 		id = message.ID
@@ -416,13 +416,13 @@ func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageClient
 			fmt.Println("Distribucion Descentralizada")			
 			timestart = time.Now().Unix()
 			message := nodos.MessageNode{ Cantidad1:cantidad_uniforme + cantidad_resto, Cantidad2:cantidad_uniforme,Cantidad3:cantidad_uniforme,NombreLibro:nombre_libro,ID: IDNODE}
-			resultado = PropuestaD(&message)
+			resultado += PropuestaD(&message)
 		}
 		if(message.Tipo == 2){
 			fmt.Println("Distribucion Centralizada")
 			message := nodos.MessageNode{ Cantidad1:cantidad_uniforme + cantidad_resto, Cantidad2:cantidad_uniforme,Cantidad3:cantidad_uniforme,NombreLibro:nombre_libro,ID: IDNODE}
 			
-			resultado = Propuesta(&message)
+			resultado += Propuesta(&message)
 		}
 		nombre_libro = " "
 		listachunks = listachunks[:0]

@@ -81,7 +81,7 @@ func (s *Server) SubirChunk(ctx context.Context, message *cliente.MessageCliente
 	}
 	ioutil.WriteFile("Fragmentos/"+fileName, message.Chunks, os.ModeAppend)
 	fmt.Println( "Origen:"+strconv.FormatInt(message.ID,10)+" | Fragmento Guardado: "+ fileName )
-	return &cliente.ResponseCliente{},nil
+	return &cliente.ResponseCliente{Retorno:1},nil
 }
 
 // Propuesta Version Descentralizada.
@@ -110,6 +110,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 	var respuesta1c int64 = 0
 	var respuesta2c int64 = 0
 
+	var contador int64 = 0 
+
 	if(cantidad1>0){		
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial("dist109:9000", grpc.WithInsecure())
@@ -122,7 +124,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 			if err != nil {
 				flag1 = 1	
 				flag1c = 0
-			}else{	
+			}else{
+				contador+=1	
 				respuesta1 = response1.NameNodeUsed
 				respuesta1c = response1.Tiempo
 			}
@@ -144,7 +147,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 			if err2 != nil {
 				flag2 = 1	
 				flag2c = 0
-			}else{	
+			}else{
+				contador+=1	
 				respuesta2 = response2.NameNodeUsed
 				respuesta2c = response2.Tiempo
 			}
@@ -186,7 +190,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					}   
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
-					Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+					respuesta1 , _ := Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+					contador += respuesta1.Retorno
 					indice+=1				
 				}
 				// Escribimos en el DataNode ID = 2.
@@ -198,7 +203,8 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 					}   
 					Conexion := cliente.NewChatServiceClient(conn2)
 					message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
-					Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.	
+					respuesta2 , _ := Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+					contador += respuesta2.Retorno
 					indice+=1
 				}
 				// Enviamos a DataNode ID = 3.
@@ -217,7 +223,7 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 			fmt.Println("Propuesta Descentralizada Aceptada !")		
 			timestart = 0		
 			NameNodeUse = 0
-			return 1
+			return contador
 		}
 
 		if(flag1==1 && flag2 == 0){
@@ -321,15 +327,15 @@ func PropuestaD(msj *nodos.MessageNode) int64{
 				return PropuestaD(msj)
 			}
 		}
-	}
-	NameNodeUse = 0	
-	return 1
+	}	
+	return contador
 }
 
 
 
 // Propuesta Version Centralizada.
 func Propuesta(msj *nodos.MessageNode) int64{
+	var contador int64 = 0
 	// Conectamos con el DataNode.
 	var conn2 *grpc.ClientConn
 	conn2, err := grpc.Dial("dist112:9000", grpc.WithInsecure())
@@ -344,6 +350,7 @@ func Propuesta(msj *nodos.MessageNode) int64{
 		fmt.Println("Error al conectar con NameNode, asegurese de que esta encendido")
 		return 0
 	}
+	contador+=1
 	fmt.Println("Respuesta NameNode: [ DN1:"+strconv.FormatInt(response.Cantidad1,10)+" | DN2:"+strconv.FormatInt(response.Cantidad2,10)+" | DN3:"+strconv.FormatInt(response.Cantidad3,10)+" ]")
 	// Enviamos a DataNode ID = 1. ---- esto cambiar al duplicar segun sea
 	var k int64
@@ -357,7 +364,8 @@ func Propuesta(msj *nodos.MessageNode) int64{
 		}   
 		Conexion := cliente.NewChatServiceClient(conn2)
 		message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
-		Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+		respuesta1, _ :=Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+		contador+= respuesta1.Retorno
 		indice+=1
 	}
 	// Escribimos en el DataNode ID = 2.
@@ -369,7 +377,8 @@ func Propuesta(msj *nodos.MessageNode) int64{
 		}   
 		Conexion := cliente.NewChatServiceClient(conn2)
 		message := cliente.MessageCliente{ NombreLibro:nombre_libro+"_"+strconv.FormatInt(indice,10),Chunks:listachunks[indice],ID:IDNODE }
-		Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.	
+		respuesta1, _ :=Conexion.SubirChunk(context.Background(), &message)  // Enviamos propuesta.
+		contador+= respuesta1.Retorno
 		indice+=1
 	}
 	// Enviamos a DataNode ID = 3.
@@ -385,12 +394,12 @@ func Propuesta(msj *nodos.MessageNode) int64{
 		indice+=1
 		fmt.Println("Fragmento Guardado: ", fileName)	
 	}
-	return 1
+	return contador
 }
 
 
 func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageCliente) (*cliente.ResponseCliente,error){
-	var resultado int64
+	var resultado int64 = 0
 
 	if(id == 0){ // Node disponible.
 		fmt.Println("\nSe ha solicitado subir el libro "+ message.NombreLibro[0:len(message.NombreLibro)-2])
@@ -405,13 +414,13 @@ func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageClient
 			fmt.Println("Distribucion Descentralizada")			
 			timestart = time.Now().Unix()
 			message := nodos.MessageNode{ Cantidad1:cantidad_uniforme + cantidad_resto, Cantidad2:cantidad_uniforme,Cantidad3:cantidad_uniforme,NombreLibro:nombre_libro,ID: IDNODE}
-			resultado = PropuestaD(&message)
+			resultado+ = PropuestaD(&message)
 		}
 		if(message.Tipo == 2){
 			fmt.Println("Distribucion Centralizada")
 			message := nodos.MessageNode{ Cantidad1:cantidad_uniforme + cantidad_resto, Cantidad2:cantidad_uniforme,Cantidad3:cantidad_uniforme,NombreLibro:nombre_libro,ID: IDNODE}
 			
-			resultado = Propuesta(&message)
+			resultado += Propuesta(&message)
 		}
 		nombre_libro = " "
 		listachunks = listachunks[:0]
@@ -426,7 +435,7 @@ func (s *Server) EnviarLibro(ctx context.Context, message *cliente.MessageClient
 		}				
 	}
 	listachunks = append(listachunks, message.Chunks) // Añadimos el chunk a la lista.
-	return &cliente.ResponseCliente{},nil	
+	return &cliente.ResponseCliente{Retorno:1},nil	
 }
 
 // Borra archivos al iniciar programa.
